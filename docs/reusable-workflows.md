@@ -1,8 +1,8 @@
 # Shared addon workflows
 
-D2K consumes reusable workflows from [CraightonH/wow-addon-template](https://github.com/CraightonH/wow-addon-template). The shared implementation remains in that repository; D2K keeps small caller workflows and its own source/tests.
+D2K consumes reusable workflows from [CraightonH/wow-addon-template](https://github.com/CraightonH/wow-addon-template). D2K includes the template’s reusable build/release/deployment entry points locally for nested release calls. The shared Python tooling is still checked out from the pinned template version; there is no separate uploader implementation.
 
-Both the `uses: ...@workflows-v1.0.1` reference and `tooling-ref: workflows-v1.0.1` select the same immutable tooling release. To upgrade, change both together in the build/release/CurseForge callers and verify candidate builds. Do not move published tooling tags.
+Remote workflow references and `tooling-ref: workflows-v1.0.1` select the same immutable tooling release. The tagged release caller uses `./.github/workflows/reusable-release.yml`. To upgrade, update remote references, tooling-ref values, and the three local reusable workflow copies together, then verify candidate and tagged builds. Do not move published release tags.
 
 ## Configuration
 

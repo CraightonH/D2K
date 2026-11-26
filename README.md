@@ -37,7 +37,7 @@ Optional ForeverAuras icons reference that addon's existing files; no ForeverAur
 
 ## Development
 
-This repository was generated from [wow-addon-template](https://github.com/CraightonH/wow-addon-template) and uses its shared workflows pinned to **`workflows-v1.0.1`**.
+This repository was generated from [wow-addon-template](https://github.com/CraightonH/wow-addon-template) and uses its CI/CD tooling pinned to **`workflows-v1.0.1`**. The template’s reusable release workflow entry points are included locally so nested calls resolve within this repository.
 
 Install Lua 5.1 and Python 3, then run:
 
