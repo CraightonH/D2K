@@ -1,0 +1,7 @@
+.release/
+.addon-tooling/
+.addon-packager/
+.release-artifact/
+__pycache__/
+*.pyc
+.venv/
