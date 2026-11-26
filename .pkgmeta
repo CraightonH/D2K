@@ -1,4 +1,4 @@
-package-as: ExampleAddon
+package-as: D2K
 enable-nolib-creation: no
 ignore:
   - .github
@@ -10,6 +10,5 @@ ignore:
   - scripts
   - tests
   - docs
-  - shared
   - README.md
   - CHANGELOG.md

@@ -1,12 +1,18 @@
-# Client testing before a release
+# D2K client verification
 
-Record addon version, client version and build, interface, character class, and other enabled addons in the release PR. A successful Lua test or ZIP build does not exercise protected frames, combat restrictions or the real game API.
+Record the addon version, client version/build, interface, class, and other enabled addons when reporting a problem. The template's upstream commit is a research baseline, not a claim that this client build has been tested.
 
-- Install the packaged ZIP in a clean test setup. Verify the top folder and TOC names match and the addon appears in the list.
-- Test fresh SavedVariables and a copy from the previous version. Check migrations preserve settings and do not affect another character or addon.
-- Log in, reload, log out and return. Check for duplicate event handlers, missing initialization and unexpected saved-data changes.
-- Exercise the main feature both outside and inside combat where applicable. Capture Lua errors and blocked-action messages.
-- Test options and defaults, UI scale, moving/resizing frames, and the feature when its target unit, item, spell or data is unavailable.
-- Confirm packaged files include required textures and libraries. Test with and without optional dependencies.
+Before a public release, install the packaged ZIP and check:
 
-For LootGoblins, cover solo/group changes, roll and queue lifecycle, addon message handling, history and existing saved data. For Rangefinder, cover friendly/enemy nameplates, hover and last-cast range, unknown spells, minimum range, combat and nameplate visibility changes. These addon-specific scenarios require their actual implementations.
+- The folder/TOC names are D2K and all three bundled round textures render, including at small UI scales.
+- Visible friendly and enemy plates show labels without targeting or hovering; the player's own plate is excluded.
+- A hovered offensive ranged spell overrides the current cast; leaving the tooltip restores the active cast, then the last successful spell.
+- Casts/channels update immediately. Interruptions and failures restore the prior successful selection; unrelated or late events do not clear a newer cast.
+- Friendly range checks remain separate from offensive-spell colors. Test near, medium, and distant allies, group members, town crowds, combat, and instances.
+- Unknown, restricted, or conflicting data displays `?` or hides according to settings.
+- Icon choice, size, spacing, tint, text scaling, fonts, position, colors, and opacity apply and survive a reload.
+- Built-in icons work without ForeverAuras; library choices use its installed files and missing paths fall back to crosshairs.
+- Fresh D2K settings and existing D2K settings work across reloads and character changes.
+- Nameplate reuse, visibility changes, large pulls, and crowded towns do not leave stale labels or generate Lua errors.
+
+Saved variables are `D2KDB` (account-wide preferences) and `D2KCharacterDB` (last successful spell). There are no historical command aliases or profile migrations.

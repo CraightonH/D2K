@@ -1,7 +1,7 @@
 {
-  "name": "ExampleAddon",
+  "name": "D2K",
   "interface": 16001,
-  "curseforge_project_id": 0,
+  "curseforge_project_id": 1831997,
   "curseforge_version_type_id": 88568,
   "upstream_repository": "Gethe/wow-ui-source",
   "upstream_branch": "forever",

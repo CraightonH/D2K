@@ -1,45 +1,56 @@
-# WoW addon template
+# D2K
 
-A GitHub template for WoW Forever addons, backed by versioned reusable build and release workflows. New addons copy the scaffold once; existing addons can adopt the small caller workflows without moving their source or replacing their tests.
+[![Checks](https://github.com/CraightonH/D2K/actions/workflows/checks.yml/badge.svg)](https://github.com/CraightonH/D2K/actions/workflows/checks.yml)
+[![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## Start an addon
+<img src="docs/assets/d2k-catalog.png" width="320" alt="D2K: spell range and nameplate distance estimates">
 
-1. Select **Use this template** to create a repository, then run `python3 scripts/initialize.py YourAddon`.
-2. Edit the TOC title, description, author and icon. Keep `@project-version@` for BigWigs packaging. Choose a license and add its full text as `LICENSE` before a release.
-3. Create a CurseForge project and put its numeric ID in `addon.json` and the TOC's `X-Curse-Project-ID`. Do not reuse another addon's project ID.
-4. Add focused Lua tests under `tests/`. Install Lua 5.1 locally and run `python3 scripts/check.py`. Branch pushes and pull requests run checks and upload a validated candidate ZIP.
+D2K adds compact distance estimates to friendly and enemy nameplates in **WoW Forever**. Enemy indicators change color based on your hovered spell, current cast, or last successful cast, helping you develop a feel for spell range.
 
-Source uses the private addon namespace and declared SavedVariables. Add schema migrations when persistent data changes. The client-testing notes are under `docs/`.
+- A small number beneath the health bar: `25` means **within 25 yards**.
+- Spell priority: **hovered spell → current cast/channel → last successful cast**.
+- Friendly distances use their own checks, including proximity checks outside combat and confirmed group-member distances when available.
+- Configurable fonts, colors, opacity, placement, icons, and update interval. Icons scale with text by default.
+- Six built-in icon shapes, native raid markers, optional ForeverAuras icon files, and custom texture paths or file IDs.
 
-## Publish from a tag
+## Install and configure
 
-Set repository variables `RELEASE_ENABLED=true` and `CURSEFORGE_ENABLED=true`. Create a GitHub environment named `curseforge` and add the CurseForge author upload token as `CF_API_TOKEN`, either as a repository secret or an environment secret. Leave required reviewers unconfigured if deployment should be automatic.
+Install a packaged ZIP from [Releases](https://github.com/CraightonH/D2K/releases) or the [CurseForge project](https://www.curseforge.com/projects/1831997). The archive contains one `D2K` folder; place it in `World of Warcraft/_forever_/Interface/AddOns/` and enable **D2K** in the AddOns list.
 
-After reviewing and testing the intended source in game, commit it and push an annotated version tag:
+Enable enemy nameplates with **V** and friendly nameplates with **Shift+V**, or your configured bindings. Open **`/d2k`** or **Options → AddOns → D2K** for settings. The icon chooser is under **Range icon…**.
+
+| Command | Purpose |
+| --- | --- |
+| `/d2k` | Open settings |
+| `/d2k on` / `/d2k off` | Enable or hide overlays |
+| `/d2k clear` | Forget the last successful spell |
+| `/d2k reset` | Reset settings |
+| `/d2k debug` | Print client and available target range checks |
+
+## Precision
+
+Numbers round the confirmed upper limit **up** to the next five yards. Displaying multiples of five does not guarantee five-yard measurement precision: friendly checks can have wider gaps than enemy checks. `?` means the client supplied no usable upper limit.
+
+Range checks do not guarantee line of sight, facing, cooldown readiness, resources, or a successful cast. Hidden, restricted, invalid, and contradictory answers remain unknown. D2K does not draw terrain or world range overlays.
+
+Optional ForeverAuras icons reference that addon's existing files; no ForeverAuras code or textures are bundled. Built-in icons work independently.
+
+## Development
+
+This repository was generated from [wow-addon-template](https://github.com/CraightonH/wow-addon-template) and uses its shared workflows pinned to **`workflows-v1.0.1`**.
+
+Install Lua 5.1 and Python 3, then run:
 
 ```sh
-git tag -a v0.1.0-alpha.1 -m 'First public alpha'
-git push origin v0.1.0-alpha.1
+python3 scripts/check.py
 ```
 
-This triggers tests, packaging, archive validation, a GitHub release and a CurseForge upload of the same checked ZIP. The tag supplies the addon version. `vX.Y.Z` is stable; `-alpha`, `-alpha.N`, `-beta` and `-beta.N` select prereleases. The GitHub release includes a manifest and, after successful deployment, a CurseForge upload receipt. Site moderation may still be pending after API acceptance.
+Checks validate TOC/package metadata, Lua syntax, the 124-assertion mocked client suite, and the upstream-watcher tests. Simulated tests do not replace [in-game verification](docs/client-testing.md).
 
-The manual **Publish existing release to CurseForge** workflow remains available for deployment recovery without rebuilding. Matching receipts suppress duplicate uploads. For ambiguous upload failures, inspect CurseForge before retrying; the API has no idempotency key.
+The source TOC uses `@project-version@`; the pinned BigWigs packager assigns the actual version when building. Install a packaged ZIP rather than the raw source checkout. CI produces a validated candidate ZIP for branch pushes and pull requests.
 
-## Share improvements across addons
+See [release setup](docs/releasing.md), [shared workflow configuration](docs/reusable-workflows.md), [data and media provenance](docs/provenance.md), and the packaged [README](README.txt) for further details.
 
-The template's caller workflows reference `workflows-v1.0.1`. The shared workflows live in this repository and support both BigWigs and an addon's existing ZIP builder. Their scripts are checked out from the same selected tooling version. Update both the caller's workflow reference and `tooling-ref` to adopt a new shared release; existing addons do not inherit template file edits automatically.
+## License
 
-See [reusable workflows](docs/reusable-workflows.md) for configuration, custom builder inputs, automatic deployment, retry behavior and version upgrades. LootGoblins is a custom-builder consumer: it retains its Lua 5.1/5.4 tests and reproducible Python package builder.
-
-## Watch client changes
-
-Set `WATCH_UPSTREAM=true` to enable daily checks of the community UI-source mirror's Forever branch. New observations open or update a compatibility issue and trigger candidate checks. The observation artifact identifies the upstream commit and build. Repeated observations are suppressed, including after closing their issue.
-
-The baseline in `addon.json` is a research snapshot, not a compatibility certification. Replace it with an upstream revision corresponding to a client build you tested. The mirror can lag the client and omits some server-side changes. Monitoring does not change the TOC or publish a release.
-
-## Local development
-
-BigWigs Packager is pinned to v2.7.0. To package locally, commit the source and run the pinned release script with `-d -g forever`; the shared CI workflow performs package and manifest validation automatically. No libraries are bundled by default. Add library pins, license notices and data provenance when needed.
-
-Run shared tooling tests with `python3 -m unittest discover -s shared/tests -v`. Addon tests and watcher tests run through `scripts/check.py`. Dependency updates for GitHub Actions are proposed by Dependabot.
+[MIT](LICENSE). Copyright © 2026 Craighton.

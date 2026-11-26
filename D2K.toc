@@ -1,0 +1,15 @@
+## Interface: 16001
+## Title: D2K
+## Notes: Friendly and enemy nameplate distance numbers and hover / last-cast spell range coaching.
+## Author: Craighton
+## Version: @project-version@
+## SavedVariables: D2KDB
+## SavedVariablesPerCharacter: D2KCharacterDB
+## X-Curse-Project-ID: 1831997
+## IconTexture: Interface\Icons\INV_Misc_Spyglass_03
+Model.lua
+Icons.lua
+IconCatalog.lua
+Range.lua
+Options.lua
+Core.lua
